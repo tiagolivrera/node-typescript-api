@@ -8,6 +8,7 @@
     "start": "yarn build && node dist/src/index.js",
     "start:dev": "ts-node-dev 'src/index.ts'",
     "test": "echo \"Error: no test specified\" && exit 1",
+    "test:functional": "jest --projects ./test --forceExit --runInBand",
     "lint": "eslint ./src ./test --ext .ts",
     "lint:fix": "eslint ./src ./test --ext .ts --fix"
   },
@@ -23,15 +24,19 @@
   "author": "Thyago de Oliveira Freitas",
   "license": "ISC",
   "devDependencies": {
+    "@types/jest": "^29.2.5",
     "@types/module-alias": "^2.0.1",
     "@types/node": "^18.11.18",
     "@typescript-eslint/eslint-plugin": "^5.48.1",
     "@typescript-eslint/parser": "^5.48.1",
     "eslint": "^8.32.0",
+    "jest": "^29.3.1",
+    "ts-jest": "^29.0.5",
     "ts-node-dev": "^2.0.0",
     "typescript": "^4.9.4"
   },
   "dependencies": {
+    "@types/supertest": "^2.0.12",
     "module-alias": "^2.2.2"
   }
 }
