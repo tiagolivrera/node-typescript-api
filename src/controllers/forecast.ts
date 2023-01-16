@@ -5,7 +5,9 @@ import { Request, Response } from "express";
 export class ForecastController {
 
   @Get('')
+  // request, response: padrao do express
   public getForecastForgeLoggedUser(_: Request, res: Response): void {
+    // garantindo o basico para o teste funcionar (dado esperado vindo da API)
     res.send([{
       "time": "2020-04-26T00:00:00+00:00",
       "forecast": [{

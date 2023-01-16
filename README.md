@@ -91,7 +91,7 @@ describe('Beach forecast functional tests', () => {
     it('should return a forecast with just a few times', async () => {
       const { body, status } = await supertest(app).get('/forecast');
       expect(status).toBe(200);
-      expect(body).toBe([
+      expect(body).toEqual([ // toEqual: verifica se os campos sao iguais
         {
           time: '2020-04-26T00:00:00+00:00',
           forecast: [
@@ -145,4 +145,79 @@ Em package.json, acrescentar no item scripts:
 Os testes podem ser executados rodando no console:
 ```console
 $ yarn test:functional
+```
+
+### Iniciando a API Node.js com OvernightJS e express
+
+Instalando o express (framework web) e o overnightjs(facilita o uso do express utilizando annotations)
+
+```console
+$ yarn add express body-parser @overnightjs/core
+$ yarn add -D @types/express
+```
+
+Criando o arquivo principal server.ts:
+
+```typescript
+import './util/module-alias';
+import { Server } from '@overnightjs/core';
+import { Application } from 'express';
+import bodyParser from 'body-parser';
+import { ForecastController } from './controllers/forecast';
+
+export class SetupServer extends Server {
+
+  constructor(private port = 3000) {
+    super();
+  }
+
+  public async init(): Promise<void> {
+    this.setupExpress();
+    this.setupControllers();
+  }
+
+  private setupExpress(): void {
+    this.app.use(bodyParser.json());
+    this.setupControllers();
+  }
+
+  private setupControllers(): void {
+    const forecastController = new ForecastController();
+    this.addControllers([forecastController]);
+  }
+
+  public getApp(): Application {
+    return this.app;
+  }
+}
+```
+
+Inicializando todos os testes no arquivo jest-setup.ts:
+```typescript
+import { SetupServer } from '@src/server';
+import supertest from 'supertest';
+
+beforeAll(() => {
+  const server = new SetupServer();
+  server.init();
+  global.testRequest = supertest(server.getApp());
+})
+```
+
+Criando um tipo testRequest de forma global em globals.d.ts (decoration):
+
+```typescript
+declare global {
+  // import inline: importante para uso global da variavel
+  //eslint-disable-next-line no-var
+  var testRequest: import("supertest").SuperTest<import("supertest").Test>;
+}
+
+export {};
+```
+
+Alterando o await do forecast.test.ts para usar o testRequest
+
+```typescript
+const { body, status } = await global.testRequest.get('/forecast');
 ```

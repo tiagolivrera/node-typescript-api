@@ -24,6 +24,7 @@ export class SetupServer extends Server {
   }
 
   private setupExpress(): void {
+    // bodyParser: o app express saberá transicionar dados usando JSON
     this.app.use(bodyParser.json());
     this.setupControllers();
   }
